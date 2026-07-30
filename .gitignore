@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets -- never commit your real key
+.env
+
+# Local data (the vector DB gets recreated automatically)
+data/
+
+# OS junk
+.DS_Store
+Thumbs.db

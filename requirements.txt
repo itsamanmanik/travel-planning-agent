@@ -1,0 +1,10 @@
+# Everything here is free and open-source. No paid services.
+fastapi              # the web framework for our REST API
+uvicorn[standard]    # the server that runs FastAPI
+groq                 # client for the free Groq LLM (the "brain")
+chromadb             # the vector database for long-term memory
+ddgs                 # free DuckDuckGo web search (no API key)
+requests             # to call the free weather & Wikipedia APIs
+python-dotenv        # loads the .env file with our settings
+numpy                # small numeric helper used by the vector DB
+pytest               # (dev) runs the automated tests in tests/

@@ -1,0 +1,9 @@
+# Keep the image small and clean — never ship these to the cloud.
+.venv/
+data/
+__pycache__/
+*.pyc
+.env
+.git/
+.cache/
+tests/
