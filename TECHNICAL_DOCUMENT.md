@@ -87,7 +87,7 @@ failures as `{"error": ...}`, so one failing source never breaks a request.
 
 | Layer | Choice |
 | --- | --- |
-| LLM | Groq — Llama 3.3 70B (free API key, no card) |
+| LLM | Groq — GPT OSS 120B (free API key, no card) |
 | Vector DB | ChromaDB (local, on disk, bundled embeddings) |
 | Web search | DuckDuckGo via `ddgs` |
 | Weather | Open-Meteo |
@@ -136,7 +136,7 @@ environment variable, and choose the free instance type.
 
 ## 4. Evaluation results
 
-`python evaluate.py` runs a scorecard. Latest run (`llama-3.3-70b-versatile`):
+`python evaluate.py` runs a scorecard. Latest run (`openai/gpt-oss-120b`):
 
 | Check | Result |
 | --- | --- |

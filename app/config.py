@@ -7,7 +7,7 @@ load_dotenv()
 
 # --- LLM (Groq) ---
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-MODEL_NAME = os.getenv("MODEL_NAME", "llama-3.3-70b-versatile")
+MODEL_NAME = os.getenv("MODEL_NAME", "openai/gpt-oss-120b")
 
 # --- Long-term memory (ChromaDB) persistence directory ---
 CHROMA_DIR = os.getenv("CHROMA_DIR", "./data/chroma")

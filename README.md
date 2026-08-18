@@ -35,7 +35,7 @@ the user is vegetarian, and writes a day-by-day itinerary.
 
 | Part | Choice | Notes |
 | --- | --- | --- |
-| LLM | Groq — Llama 3.3 70B | free key, no card |
+| LLM | Groq — GPT OSS 120B | free key, no card |
 | Vector DB | ChromaDB | local, on disk, bundled embeddings |
 | Web search | DuckDuckGo (`ddgs`) | no key |
 | Weather | Open-Meteo | no key |
@@ -69,7 +69,7 @@ the user is vegetarian, and writes a day-by-day itinerary.
 
 ## Results
 
-`python evaluate.py` runs a scorecard. Latest run (`llama-3.3-70b-versatile`):
+`python evaluate.py` runs a scorecard. Latest run (`openai/gpt-oss-120b`):
 
 - Tool reliability: 3/3 tools returned live data
 - Memory recall: 3/3 notes retrieved correctly by meaning
