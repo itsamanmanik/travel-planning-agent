@@ -292,36 +292,82 @@
         ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
     }
 
-    /* Turn the model's light markdown (**bold**, headings, - lists, 1. lists)
-       into clean HTML so itineraries look formatted, not raw. */
     function renderMarkdown(text) {
-      const lines = escapeHtml(text).split("\n");
-      let html = "", listType = null;
+      const lines = text.split("\n");
+      let html = "", listType = null, inTable = false;
       const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+      const closeTable = () => { if (inTable) { html += "</tbody></table></div>"; inTable = false; } };
+      const esc = s => escapeHtml(s);
+      const inline = s => {
+        s = esc(s);
+        s = s.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        s = s.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, "<em>$1</em>");
+        s = s.replace(/`([^`]+?)`/g, "<code>$1</code>");
+        s = s.replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,
+                       '<a href="$2" target="_blank" rel="noopener">$1</a>');
+        s = s.replace(/&lt;br&gt;/g, "<br>");
+        return s;
+      };
 
       for (let raw of lines) {
         let line = raw.trim();
-        if (!line) { closeList(); continue; }
-        line = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>"); // bold
-        line = line.replace(/\[(.+?)\]\((https?:\/\/[^\s)]+)\)/g,
-                            '<a href="$2" target="_blank" rel="noopener">$1</a>'); // links
 
-        const heading = line.match(/^<strong>(.+?)<\/strong>:?$/);   // a bold-only line = section title
-        const bullet  = line.match(/^[-*]\s+(.*)$/);
-        const number  = line.match(/^\d+\.\s+(.*)$/);
+        if (!line) { closeList(); closeTable(); continue; }
+
+        if (/^\|[-:\s|]+\|$/.test(line)) continue;
+
+        if (/^\|(.+)\|$/.test(line)) {
+          const cells = line.slice(1, -1).split("|").map(c => inline(c.trim()));
+          if (!inTable) {
+            closeList();
+            html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;margin:8px 0">';
+            html += "<thead><tr>" + cells.map(c =>
+              `<th style="text-align:left;padding:8px 12px;border-bottom:2px solid rgba(128,128,128,0.25);font-weight:600">${c}</th>`
+            ).join("") + "</tr></thead><tbody>";
+            inTable = true;
+          } else {
+            html += "<tr>" + cells.map(c =>
+              `<td style="padding:8px 12px;border-bottom:1px solid rgba(128,128,128,0.15)">${c}</td>`
+            ).join("") + "</tr>";
+          }
+          continue;
+        }
+
+        closeTable();
+
+        const h = line.match(/^(#{1,4})\s+(.*)$/);
+        if (h) {
+          closeList();
+          const tag = `h${h[1].length + 1}`;
+          html += `<${tag}>${inline(h[2])}</${tag}>`;
+          continue;
+        }
+
+        if (/^---+$/.test(line) || /^\*\*\*+$/.test(line)) {
+          closeList();
+          html += "<hr>";
+          continue;
+        }
+
+        line = inline(line);
+
+        const heading = line.match(/^<strong>(.+?)<\/strong>:?$/);
+        const bullet  = raw.trim().match(/^[-*]\s+(.*)$/);
+        const number  = raw.trim().match(/^\d+\.\s+(.*)$/);
 
         if (heading) { closeList(); html += `<h3>${heading[1]}</h3>`; }
         else if (bullet) {
           if (listType !== "ul") { closeList(); listType = "ul"; html += "<ul>"; }
-          html += `<li>${bullet[1]}</li>`;
+          html += `<li>${inline(bullet[1])}</li>`;
         }
         else if (number) {
           if (listType !== "ol") { closeList(); listType = "ol"; html += "<ol>"; }
-          html += `<li>${number[1]}</li>`;
+          html += `<li>${inline(number[1])}</li>`;
         }
         else { closeList(); html += `<p>${line}</p>`; }
       }
       closeList();
+      closeTable();
       return html;
     }
 
