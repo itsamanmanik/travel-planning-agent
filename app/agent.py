@@ -48,8 +48,10 @@ class TravelAgent:
         plan = make_plan(message, history, memories)
 
         # Ask instead of guessing when the request is ambiguous.
+        # Still run the learn step so preferences stated alongside a vague request are saved.
         if plan["needs_clarification"] and plan["clarifying_question"]:
             reply = plan["clarifying_question"]
+            self._learn_preferences(user_id, message)
             self._save_turn(session_id, message, reply)
             return self._response(reply, plan, tools_used=[], memories=memories)
 
